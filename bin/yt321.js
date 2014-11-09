@@ -13,6 +13,8 @@ yargs = require('yargs')
   .describe('s', 'Search WORD in youtube')
   .boolean('l').alias('l', 'loop')
   .describe('l', 'Play in endless loop')
+  .boolean('z').alias('z', 'random')
+  .describe('z', 'Random play specified urls')
   .boolean('d').alias('d', 'download')
   .describe('d', 'Download mp3'),
 argv = yargs.argv;
