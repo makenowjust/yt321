@@ -16,6 +16,7 @@
   "bin": {
     "yt321": "./bin/yt321.js"
   },
+  "preferGlobal": true,
   "repository": "https://github.com/MakeNowJust/yt321.git",
   "dependencies": {
     "async": "^0.9.0",
