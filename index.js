@@ -6,6 +6,7 @@ fs = require('fs');
 
 var
 debug = require('debug')('yt321'),
+async = require('async'),
 mkdirp = require('mkdirp'),
 ytdl = require('ytdl-core'),
 video2mp3 = require('video2mp3');
@@ -52,5 +53,20 @@ function download(youtubeURL) {
   } });
 }
 
+function parsePlayList(str) {
+  return str.split('\n').filter(function (s) {
+    return !/^\s*#/.test(s) && s.trim();
+  }).map(function (s) { return s.trim(); });
+}
+
+function readPlayList(filename, callback) {
+  fs.readFile(filename, 'utf8', function (err, str) {
+    if (err) return callback(err);
+    callback(null, parsePlayList(str));
+  });
+}
+
 exports.getVideoId = getVideoId;
 exports.mp3path = mp3path;
+exports.parsePlayList = parsePlayList;
+exports.readPlayList = readPlayList;

@@ -6,29 +6,31 @@ package = require('../package.json');
 
 var
 yargs = require('yargs')
-  .usage('Usage:\n  $0 [-dl] URL...\n  $0 -s WORD')
+  .usage('Usage:\n  $0 [-dl] URLs...\n  $0 -s WORD')
   .version(package.version, 'version').alias('version', 'V')
   .help('help').alias('help', 'h')
-  .string('s').alias('s', 'search')
+  .boolean('s').alias('s', 'search')
   .describe('s', 'Search WORD in youtube')
   .boolean('l').alias('l', 'loop')
   .describe('l', 'Play in endless loop')
   .boolean('z').alias('z', 'random')
   .describe('z', 'Random play specified urls')
   .boolean('d').alias('d', 'download')
-  .describe('d', 'Download mp3'),
+  .describe('d', 'Download mp3')
+  .string('@').alias('@', 'list')
+  .describe('@', 'Specify play list file'),
 argv = yargs.argv;
 
-if (typeof argv.search === 'string') {
-  search(argv.search);
-} else if (argv._.length >= 1) {
+if (argv.search) {
+  search(argv._);
+} else if (argv._.length >= 1 || (argv.list && argv.list.length >= 1)) {
   if (argv.download) {
-    download(argv._);
+    download(argv._, argv.list || []);
   } else {
-    play(argv._, argv.loop);
+    play(argv._, argv.loop, argv.random, argv.list || []);
   }
 } else {
-  console.error('no specified -u and -s');
+  console.error('no specified -s or URLs');
   yargs.showHelp();
 }
 
@@ -57,53 +59,74 @@ function search (word) {
   });
 }
 
-function download(urls) {
+function download(urls, list) {
   var
   async = require('async'),
   ytdl = require('ytdl-core'),
   fs = require('fs'),
   yt321 = require('..'),
   path = require('path');
-  debug('[download] start ', urls);
+  if (!Array.isArray(list)) list = [list];
+  debug('[download] start', urls);
+  debug('[download] list', list);
 
-  async.each(url, function (url, next) {
-    yt321.mp3path(url, function (err, p) {
-      if (err) next(err);
-      ytdl.getInfo(url, function (err, info) {
-        if (err) next(err);
-
-        fs.createReadStream(p)
-          .pipe(fs.createWriteStream(path.join(process.cwd(), info.title + '.mp3')))
-          .on('finish', function () {
-            debug('[download] finish ' + url);
-            next(null);
-          });
-      });
-    });
-  }, function (err) {
+  async.concat(list, yt321.readPlayList, function (err, urlss) {
     if (err) throw err;
-    debug('[download] finish all');
+    debug('[play] list urls', urlss);
+
+    async.each(urls.concat(urlss), function (url, next) {
+      yt321.mp3path(url, function (err, p) {
+        if (err) next(err);
+        ytdl.getInfo(url, function (err, info) {
+          if (err) next(err);
+
+          var
+          p2 = path.join(process.cwd(), info.title + '.mp3');
+          fs.createReadStream(p)
+            .pipe(fs.createWriteStream(p2))
+            .on('finish', function () {
+              debug('[download] finish ' + url);
+              console.log(url + ' => ' + p2);
+              next(null);
+            });
+        });
+      });
+    }, function (err) {
+      if (err) throw err;
+      debug('[download] finish all');
+    });
   });
 }
 
-function play(urls, loop) {
+function play(urls, loop, random, list) {
   var
   async = require('async'),
   yt321 = require('..'),
   mpg321 = require('mpg321');
-  debug('[play] start ' + urls);
+  if (!Array.isArray(list)) list = [list];
+  debug('[play] start', urls);
+  debug('[play] list', list);
 
-  async.map(urls, yt321.mp3path, function (err, ps) {
+  async.concat(list, yt321.readPlayList, function (err, urlss) {
     if (err) throw err;
-    var
-    m = mpg321(), child;
-    if (loop) {
-      debug('[play] loop');
-      m.loop(0);
-    }
-    debug('[play] mpg321 ' + ps.join(' '));
-    m.file.apply(m, ps);
-    child = m.exec();
-    process.on('SIGINT', child.kill.bind(child));
-  });
+    debug('[play] list urls', urlss);
+
+    async.map(urls.concat(urlss), yt321.mp3path, function (err, ps) {
+      if (err) throw err;
+      var
+      m = mpg321(), child;
+      if (loop) {
+        debug('[play] loop');
+        m.loop(0);
+      }
+      if (random) {
+        debug('[play] random');
+        m.random();
+      }
+      debug('[play] mpg321 ' + ps.join(' '));
+      m.file.apply(m, ps);
+      child = m.exec();
+      process.on('SIGINT', child.kill.bind(child));
+    });
+  })
 }
