@@ -52,7 +52,7 @@ function search (word) {
 
     results.forEach(function (result) {
       console.log('title: ' + result.title);
-      console.log('description: ' + result.description);
+      if (result.description) console.log('description: ' + result.description);
       console.log('url: ' + '\'' + result.url + '\'');
       console.log();
     });
