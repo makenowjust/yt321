@@ -2,6 +2,8 @@
 
 Play audio from youtube url.
 
+[![NPM](https://nodei.co/npm/yt321.png)](https://nodei.co/npm/yt321/)
+[![Dependency Status](https://david-dm.org/MakeNowJust/yt321.svg)](https://david-dm.org/MakeNowJust/yt321)
 
 ##Install
 
