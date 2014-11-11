@@ -12,7 +12,7 @@ $ yt321 'your favorite Youtube URL'
 ##Install
 
 Requires `mpg321` and `ffmpeg` command.
-Please read [MakeNowJust/mpg321](https://github.com/MakeNowJust/mpg321) and [fluent-ffmpeg/node-fluent-ffmpeg](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg).
+Please see [MakeNowJust/mpg321](https://github.com/MakeNowJust/mpg321) and [fluent-ffmpeg/node-fluent-ffmpeg](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg).
 
 And run:
 
