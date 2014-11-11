@@ -17,6 +17,8 @@ yargs = require('yargs')
   .describe('z', 'Random play specified urls')
   .boolean('d').alias('d', 'download')
   .describe('d', 'Download mp3')
+  .boolean('f').alias('f', 'force')
+  .describe('f', 'Force downloading specified Youtube URL, not use cache')
   .string('@').alias('@', 'list')
   .describe('@', 'Specify play list file'),
 argv = yargs.argv;
@@ -25,9 +27,9 @@ if (argv.search) {
   search(argv._);
 } else if (argv._.length >= 1 || (argv.list && argv.list.length >= 1)) {
   if (argv.download) {
-    download(argv._, argv.list || []);
+    download(argv._, argv.list || [], argv.force);
   } else {
-    play(argv._, argv.loop, argv.random, argv.list || []);
+    play(argv._, argv.loop, argv.random, argv.list || [], argv.force);
   }
 } else {
   console.error('no specified -s or URL');
@@ -59,7 +61,7 @@ function search (word) {
   });
 }
 
-function download(urls, list) {
+function download(urls, list, force) {
   var
   async = require('async'),
   ytdl = require('ytdl-core'),
@@ -69,13 +71,14 @@ function download(urls, list) {
   if (!Array.isArray(list)) list = [list];
   debug('[download] start', urls);
   debug('[download] list', list);
+  debug('[download] force', force);
 
   async.concat(list, yt321.readPlayList, function (err, urlss) {
     if (err) throw err;
     debug('[play] list urls', urlss);
 
     async.each(urls.concat(urlss), function (url, next) {
-      yt321.mp3path(url, function (err, p) {
+      yt321.mp3path(force, url, function (err, p) {
         if (err) next(err);
         ytdl.getInfo(url, function (err, info) {
           if (err) next(err);
@@ -98,7 +101,7 @@ function download(urls, list) {
   });
 }
 
-function play(urls, loop, random, list) {
+function play(urls, loop, random, list, force) {
   var
   async = require('async'),
   yt321 = require('..'),
@@ -106,12 +109,13 @@ function play(urls, loop, random, list) {
   if (!Array.isArray(list)) list = [list];
   debug('[play] start', urls);
   debug('[play] list', list);
+  debug('[play] force', force);
 
   async.concat(list, yt321.readPlayList, function (err, urlss) {
     if (err) throw err;
     debug('[play] list urls', urlss);
 
-    async.map(urls.concat(urlss), yt321.mp3path, function (err, ps) {
+    async.map(urls.concat(urlss), yt321.mp3path.bind(yt321, force), function (err, ps) {
       if (err) throw err;
       var
       m = mpg321(), child;

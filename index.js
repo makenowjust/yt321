@@ -21,7 +21,7 @@ function getVideoId(youtubeURL) {
   return querystring.parse(url.parse(youtubeURL).query).v;
 }
 
-function mp3path(youtubeURL, callback) {
+function mp3path(force, youtubeURL, callback) {
   var
   v = getVideoId(youtubeURL), p;
 
@@ -29,21 +29,29 @@ function mp3path(youtubeURL, callback) {
   p = path.join(cache_dir, v + '.mp3');
 
   debug('[mp3path] start');
+  if (force) {
+    return downloadAndConvert(youtubeURL, p, callback);
+  }
+
   fs.stat(p, function (err, info) {
     if (err) {
       debug('[mp3path] no cached');
-      var
-      stream = download(youtubeURL);
-      debug('[mp3path] convert to mp3');
-      video2mp3.convert(stream, p, function (err) {
-        if (err) return callback(err);
-        callback(null, p);
-      });
+      downloadAndConvert(youtubeURL, p, callback);
     } else {
       debug('[mp3path] cached');
       callback(null, p);
     }
   });
+
+  function downloadAndConvert(youtubeURL, p, callback) {
+    var
+    stream = download(youtubeURL);
+    debug('[mp3path] convert to mp3');
+    video2mp3.convert(stream, p, function (err) {
+      if (err) return callback(err);
+      callback(null, p);
+    });
+  }
 }
 
 function download(youtubeURL) {
