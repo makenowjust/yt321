@@ -6,7 +6,7 @@ package = require('../package.json');
 
 var
 yargs = require('yargs')
-  .usage('Usage:\n  $0 [-dl] URLs...\n  $0 -s WORD')
+  .usage('Usage:\n  $0 [-dzl] [-@ FILE]... URL...\n  $0 -s WORD')
   .version(package.version, 'version').alias('version', 'V')
   .help('help').alias('help', 'h')
   .boolean('s').alias('s', 'search')
@@ -30,7 +30,7 @@ if (argv.search) {
     play(argv._, argv.loop, argv.random, argv.list || []);
   }
 } else {
-  console.error('no specified -s or URLs');
+  console.error('no specified -s or URL');
   yargs.showHelp();
 }
 
