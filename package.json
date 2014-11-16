@@ -1,6 +1,6 @@
 {
   "name": "yt321",
-  "version": "1.0.0-dev",
+  "version": "1.0.0",
   "description": "Play audio from Youtube URL",
   "keywords": [
     "video",
