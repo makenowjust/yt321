@@ -2,7 +2,7 @@
 
 Play audio from Youtube URL.
 
-```
+```console
 $ yt321 'your favorite Youtube URL'
 ```
 
@@ -16,7 +16,7 @@ Please see [MakeNowJust/mpg321](https://github.com/MakeNowJust/mpg321) and [flue
 
 And run:
 
-```
+```console
 $ npm install -g yt321
 ```
 
@@ -24,44 +24,44 @@ $ npm install -g yt321
 
 ###Play from Youtube URL
 
-```
+```console
 $ yt321 youtube-url
 ```
 
 Example:
 
-```
+```console
 $ yt321 http://www.youtube.com/watch?v=8JsG_fWWojM
 # wait for downloading video data
 ```
 
 ###Play in endless loop
 
-```
+```console
 $ yt321 -l youtube-url
 ```
 
 Example:
 
-```
+```console
 $ yt321 -l http://www.youtube.com/watch?v=8JsG_fWWojM 
 ```
 
 ###Play from Youtube URL randomly
 
-```
+```console
 $ yt321 -z youtube-url1 youtube-url2...
 ```
 
 ###Search
 
-```
+```console
 $ yt321 -s search-word
 ```
 
 Example:
 
-```
+```console
 $ yt321 -s ambient music
 title: Top Chill-Out Ambient Music 2014
 description: Top Chill-Out Ambient Music 2014 Best chill-out relaxing ambient music 2014 selection ! https://www.facebook.com/bestchillout Tracklist: 01 Indigolab - Dream...
@@ -102,6 +102,12 @@ url: 'http://www.youtube.com/watch?v=5UvfTupgLHI&feature=youtube_gdata'
 title: RELAX TV - 3 hours of Relaxing Music, Soothing Nature Sounds, Ambient Music
 description: Relaxing music and soothing nature sounds, peaceful ambient relaxation, relax TV. You may buy these films in original full HD 1080p quality only on ☯ http://...
 url: 'http://www.youtube.com/watch?v=6zqpDVyCB2Y&feature=youtube_gdata'
+```
+
+###Search with peco
+
+```console
+$ yt321 $(yt321 -1s search-word | peco | awk '{print $1}')
 ```
 
 ###And more...
