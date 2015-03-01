@@ -28,6 +28,6 @@
     "video2mp3": "^0.1.7",
     "yargs": "^3.1.0",
     "youtube-search": "^0.2.0",
-    "ytdl-core": "^0.4.1"
+    "ytdl-core": "^0.5.0"
   }
 }
