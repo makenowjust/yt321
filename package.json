@@ -15,6 +15,13 @@
   "bin": {
     "yt321": "./bin/yt321.js"
   },
+  "files": [
+    "package.json",
+    "README.md",
+    "LICENSE",
+    "bin",
+    "lib"
+  ],
   "preferGlobal": true,
   "repository": "https://github.com/MakeNowJust/yt321.git",
   "dependencies": {
