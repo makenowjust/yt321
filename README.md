@@ -1,6 +1,8 @@
 yt321
 ===
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/MakeNowJust/yt321.svg)](https://greenkeeper.io/)
+
 Play audio from Youtube URL.
 
 ```console
